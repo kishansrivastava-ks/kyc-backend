@@ -1,0 +1,40 @@
+[
+  {
+    "_id": "5c8a1d5b0190b214360dc057",
+    "name": "Kishan Srivastava",
+    "email": "kishansrivastava.01.ks@gmail.com",
+    "phone": "8176065235",
+    "status": "In 12th"
+  },
+  {
+    "_id": "5c8a1d5b0190b214360dc058",
+    "name": "Kishan",
+    "email": "2022uee1030@mnit.ac.in",
+    "phone": "1234567890",
+    "status": "Dropper"
+  },
+  {
+    "id": null,
+    "name": "test name",
+    "email": "test@example.com",
+    "phone": "123789456"
+  },
+  {
+    "id": "5c8a1d5b0190b214360dc0581",
+    "name": "test name",
+    "email": "test@example.com",
+    "phone": "123789456"
+  },
+  {
+    "id": "5c8a1d5b0190b214360dc0581",
+    "name": "test name",
+    "email": "test@example.com",
+    "phone": "123789456"
+  },
+  {
+    "id": "5c8a1d5b0190b214360dc0581",
+    "name": "test name",
+    "email": "test@example.com",
+    "phone": "123789456"
+  }
+]
