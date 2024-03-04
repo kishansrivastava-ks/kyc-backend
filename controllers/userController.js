@@ -1,33 +1,38 @@
-const fs = require("fs");
+const User = require("../models/userModel");
 
-const users = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/users.json`)
-);
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
 
-exports.getAllUsers = (req, res) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      users,
-    },
-  });
+    res.status(200).json({
+      status: "success",
+      results: users.length,
+      data: {
+        users,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err,
+    });
+  }
 };
 
-exports.createUser = (req, res) => {
-  const newId = users[1]._id + 1;
-  const newUser = Object.assign({ id: newId }, req.body);
+exports.createUser = async (req, res) => {
+  try {
+    const newUser = await User.create(req.body);
 
-  users.push(newUser);
-  fs.writeFile(
-    `${__dirname}/dev-data/users.json`,
-    JSON.stringify(users),
-    (err) => {
-      res.status(201).json({
-        status: "success",
-        data: {
-          user: newUser,
-        },
-      });
-    }
-  );
+    res.status(201).json({
+      status: "success",
+      data: {
+        user: newUser,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: " fail",
+      message: err,
+    });
+  }
 };
