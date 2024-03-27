@@ -1,38 +1,46 @@
 const User = require("../models/userModel");
+const AppError = require("../utils/appError");
+const catchAsync = require("../utils/catchAsync");
+const nodemailer = require("nodemailer");
 
-exports.getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find();
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit OTP
+}
 
-    res.status(200).json({
-      status: "success",
-      results: users.length,
-      data: {
-        users,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
+
+  res.status(200).json({
+    status: "success",
+    results: users.length,
+    data: {
+      users,
+    },
+  });
+});
+
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  // console.log(user);
+  if (!user) {
+    return next(new AppError("No user found with that id", 404));
   }
-};
 
-exports.createUser = async (req, res) => {
-  try {
-    const newUser = await User.create(req.body);
+  res.status(200).json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
+});
 
-    res.status(201).json({
-      status: "success",
-      data: {
-        user: newUser,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: " fail",
-      message: err,
-    });
-  }
-};
+exports.createUser = catchAsync(async (req, res, next) => {
+  const newUser = await User.create(req.body);
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      user: newUser,
+    },
+  });
+});
