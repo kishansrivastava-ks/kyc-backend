@@ -1,5 +1,6 @@
 const express = require("express");
 const collegeController = require("../controllers/collegeController");
+const authController = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -11,7 +12,11 @@ router
 router
   .route("/")
   .get(collegeController.getAllColleges)
-  .post(collegeController.addCollege);
+  .post(
+    authController.protect,
+    authController.restrictTo("Admin"),
+    collegeController.addCollege
+  );
 
 router.route("/compare").get(collegeController.compareCollege);
 

@@ -73,11 +73,18 @@ const collegeSchema = new mongoose.Schema({
     type: Number,
     required: [true, "College must have an establishment year"],
   },
-  programsOffered: {
-    type: [String],
-    default: [],
-    required: [true, "Programs offered by the college must be specified"],
-  },
+  coursesOffered: [
+    {
+      courseName: {
+        type: String,
+        required: [true, "Please provide course name"],
+      },
+      capacity: {
+        type: Number,
+        required: [true, "Please provide the course capacity"],
+      },
+    },
+  ],
   campusFacilities: {
     type: String,
     required: [true, "You must provide campus facilities"],
@@ -86,20 +93,36 @@ const collegeSchema = new mongoose.Schema({
     type: feeStructureSchema,
     required: [true, "Fee structure must be present"],
   },
-  placementStats: {
-    type: placementStatsSchema,
-    required: [true, "Placement statistics must be provided"],
-  },
   detailedFeeStructure: {
     type: String,
     required: [true, "Give a link to the detailed fee structure"],
     match: /^(ftp|http|https):\/\/[^ "]+$/,
+  },
+  placementStats: {
+    type: placementStatsSchema,
+    required: [true, "Placement statistics must be provided"],
   },
   detailedPlacementStats: {
     type: String,
     required: [true, "Give a link to detailed placement statistics"],
     match: /^(ftp|http|https):\/\/[^ "]+$/,
   },
+  dressCode: {
+    type: String,
+    required: [
+      true,
+      "You must specify what dress code the college has. Enter NA if there is none",
+    ],
+  },
+  fest: {
+    type: [String],
+    required: [true, "Please mention the college fests"],
+  },
+  gallery: [
+    {
+      type: String,
+    },
+  ],
 });
 
 const College = mongoose.model("College", collegeSchema);

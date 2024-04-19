@@ -1,3 +1,4 @@
+const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const RegUser = require("../models/regUserModel");
 const catchAsync = require("../utils/catchAsync");
@@ -13,6 +14,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const newRegUser = await RegUser.create({
     name: req.body.name,
     email: req.body.email,
+    role: req.body.role,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
@@ -51,3 +53,57 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1. getting token and check if its there
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+  console.log(token);
+  if (!token) {
+    return next(
+      new AppError("You are not logged in. Please login to get access", 401)
+    );
+  }
+
+  // 2. verification of the token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  // console.log(decoded);
+
+  // 3. check if the user still exists
+  const freshUser = await RegUser.findById(decoded.id);
+  if (!freshUser)
+    return next(
+      new AppError("The user belonging to the token no longer exists.", 401)
+    );
+
+  // 4. check if the user changed the password after the jwt was issued
+  if (freshUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError("User recently changed password! Please login again.", 401)
+    );
+  }
+
+  // grant access to protected route
+  req.regUser = freshUser; // 🔴🔴 the user has been put to the req, now it can be used to get access to logged in user information
+  // this request (req) object would travel to the next middleware where all of its information can be used
+  next();
+});
+
+// the following would be used to restrict the access to any routes to the admin only
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    // roles is an array
+    if (!roles.includes(req.regUser.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 401)
+      );
+    }
+
+    next();
+  };
+};

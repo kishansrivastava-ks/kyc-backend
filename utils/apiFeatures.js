@@ -12,11 +12,44 @@ class APIFeatures {
     // advance filtering
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    console.log(queryStr);
 
-    this.query = this.query.find(JSON.parse(queryStr));
+    if (queryObj.name) {
+      this.query = this.query.find({
+        name: { $regex: `^${queryObj.name}`, $options: "i" },
+      });
+    } else {
+      this.query = this.query.find(JSON.parse(queryStr));
+    }
 
     return this;
   }
+
+  // filter() {
+  //   const queryObj = { ...this.queryStr };
+  //   const excludedFields = ["page", "sort", "limit", "fields"];
+  //   excludedFields.forEach((el) => delete queryObj[el]); //removing the excluded fields from the query string
+  //   console.log(queryObj);
+
+  //   // Advanced filtering for autocomplete
+  //   let queryStr = JSON.stringify(queryObj);
+
+  //   // Check if a name search term exists
+  //   if (queryObj.name) {
+  //   queryStr = queryStr.replace(
+  //     /"name":(.*?)/,
+  //     `"name": { "$regex": /^${JSON.parse(queryStr).name}/i}`
+  //   );
+  // } else {
+  //   // No search term provided, remove any existing name filter
+  //   delete queryObj.name;
+  //   queryStr = JSON.stringify(queryObj);
+  // }
+
+  //   this.query = this.query.find(JSON.parse(queryStr));
+
+  //   return this;
+  // }
 
   sort() {
     if (this.queryStr.sort) {

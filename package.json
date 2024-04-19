@@ -4,7 +4,8 @@
   "description": "backend for the kyc website",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "start:dev": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && nodemon server.js"
   },
   "author": "Kishan Srivastava",
@@ -19,6 +20,7 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.13",
     "nodemon": "^3.0.3",
+    "otp-generator": "^4.0.1",
     "validator": "^13.11.0"
   },
   "devDependencies": {
