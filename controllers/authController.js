@@ -1,6 +1,9 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+
 const RegUser = require("../models/regUserModel");
+const OTP = require("../models/otpModel");
+
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
@@ -17,9 +20,19 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    otp: req.body.otp,
   });
 
   const token = signToken(newRegUser._id);
+
+  // 🔴🔴 Find the most recent OTP for the email
+  const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+  if (response.length === 0 || otp !== response[0].otp) {
+    return res.status(400).json({
+      success: false,
+      message: "The OTP is not valid",
+    });
+  }
 
   res.status(201).json({
     status: "success",
