@@ -11,7 +11,7 @@ const updateSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: [true, "An update must have content"],
+    // required: [true, "An update must have content"],
   },
   college: {
     type: mongoose.Schema.Types.ObjectId,
